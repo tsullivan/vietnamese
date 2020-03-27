@@ -1,15 +1,15 @@
 import { range, sample, shuffle } from 'lodash';
 
 interface ChallengeSource {
-  en: string,
-  vn: string,
+  en: string;
+  vn: string;
 }
 
 type AppData = {
   numbers: {
     [key: number]: ChallengeSource;
     length: number;
-  }
+  };
 };
 
 const appData: AppData = {
@@ -25,21 +25,33 @@ const appData: AppData = {
     { en: '8', vn: 'tám' },
     { en: '9', vn: 'chín' },
     { en: '10', vn: 'mừỏi' },
-  ]
+  ],
 };
 
 interface Challenge {
   text: string;
-  options: string[];
   answer: string;
+  options: string[];
+  shuffle: () => string[];
 }
 
 // TODO Levels & Points
-export const getChallenge = (): Challenge => {
-  const idx = sample(range(0, appData.numbers.length - 1)) as number;
-  const text = appData.numbers[idx].vn;
-  const answer = appData.numbers[idx].en;
-  const options: string[] = [answer];
+export const getChallenge = (previous?: Partial<Challenge>): Challenge => {
+  let text: string | undefined = undefined;
+  let answer: string | undefined = undefined;
+  let options: string[] | undefined = undefined;
+  while (text === undefined) {
+    const idx = sample(range(0, appData.numbers.length - 1)) as number;
+    answer = appData.numbers[idx].en;
+    options = [answer];
+    if (!previous || answer !== previous.answer) {
+      text = appData.numbers[idx].vn;
+    }
+  }
+
+  if (!answer || !options) {
+    throw new Error('too old for this');
+  }
 
   while (options.length < 3) {
     const idx2 = sample(range(0, appData.numbers.length - 1)) as number;
@@ -53,5 +65,6 @@ export const getChallenge = (): Challenge => {
     text,
     answer,
     options: shuffle(options),
+    shuffle: () => shuffle(options),
   };
 };

@@ -1,46 +1,51 @@
 import * as Rx from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { delay, filter, map } from 'rxjs/operators';
 import { getChallenge } from './vietnamese';
 
 function isButton(target: unknown | HTMLButtonElement): target is HTMLButtonElement {
   return target && !!(target as HTMLButtonElement).value;
 }
 
-const makeButtons = (options: string[]) => options.map(o => {
-  return `<button value="${o}">${o}</button>`;
-}).join();
+const makeButtons = (options: string[]) =>
+  options
+    .map(o => `<button value="${o}">${o}</button>`)
+    .join('&nbsp;');
 
 export function startGame(): { domElement: HTMLDivElement } {
-  const clickButton$ = Rx.fromEvent(document, 'click').pipe(
-    map(event => (event as MouseEvent)),
-    filter(({ target }) => isButton(target)),
-    map(({ target }) => (target as HTMLButtonElement).value)
-  );
-
-  const domElement = document.createElement('div');
   const challengeElement = document.createElement('p');
   const optionsElement = document.createElement('p');
 
-  let { text, answer, options } = getChallenge();
-  challengeElement.textContent = text;
-  optionsElement.innerHTML = makeButtons(options);
+  let challenge = getChallenge();
+  challengeElement.textContent = challenge.text;
+  optionsElement.innerHTML = makeButtons(challenge.options);
 
+  const guesses$ = Rx.fromEvent(document, 'click').pipe(
+    map(event => event as MouseEvent),
+    filter(({ target }) => isButton(target)),
+    map(({ target }) => (target as HTMLButtonElement).value),
+    map(guess => {
+      if (guess === challenge.answer) {
+        challenge = getChallenge(challenge);
+        challengeElement.textContent = challenge.text;
+        optionsElement.innerHTML = makeButtons(challenge.options);
+        return true;
+      } else {
+        optionsElement.innerHTML = '🚫';
+        return false;
+      }
+    }),
+    filter(isCorrect => !isCorrect),
+    delay(600),
+    map(() => {
+      optionsElement.innerHTML = makeButtons(challenge.shuffle());
+    })
+  );
+
+  guesses$.subscribe();
+
+  const domElement = document.createElement('div');
   domElement.appendChild(challengeElement);
   domElement.appendChild(optionsElement);
-
-  const getNext$ = clickButton$
-    .pipe(
-      map(value => {
-        if (value === answer) {
-          ({ text, answer, options } = getChallenge()); // FIXME no repeats
-          challengeElement.textContent = text;
-          optionsElement.innerHTML = makeButtons(options);
-        }
-
-      })
-    );
-
-  getNext$.subscribe();
 
   return { domElement };
 }
