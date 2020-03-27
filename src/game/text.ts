@@ -4,7 +4,7 @@ import * as THREE from 'three';
 function loadFont(): Promise<THREE.Font> {
   const loader = new THREE.FontLoader();
   return new Promise((resolve, reject) => {
-    loader.load('fonts/optimer_regular.typeface.json', function(response) {
+    loader.load('fonts/droid/droid_serif_bold.typeface.json', function(response) {
       resolve(response);
     });
   });
@@ -52,23 +52,7 @@ export async function answersObjectsFactory() {
       new THREE.MeshPhongMaterial({ color: 0xffffff, flatShading: true }), // front
     ]);
     textMesh1.position.z = -100;
-
-    return textMesh1;
-  };
-}
-
-export async function guessObjectFactory() {
-  const font = await loadFont();
-  return (message: string) => {
-    const textGeo = getTextGeometry(message, font);
-
-    textGeo.computeBoundingBox();
-    textGeo.computeVertexNormals();
-
-    const textMesh1 = new THREE.Mesh(new THREE.BufferGeometry().fromGeometry(textGeo), [
-      new THREE.MeshPhongMaterial({ color: 0xffffff, flatShading: true }), // front
-    ]);
-    textMesh1.position.z = -100;
+    textMesh1.position.y = -100;
 
     return textMesh1;
   };

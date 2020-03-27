@@ -28,7 +28,7 @@ export async function startGame() {
     .pipe(
       map(key => {
         // switch the answers left/right or submit
-        if (key === 'enter') {
+        if (key === 'Enter') {
           // new challenge
           problem = getChallengeObject(questionText);
           answers = getAnswersObjects(answerTexts.join(' - '));
