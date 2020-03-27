@@ -1,50 +1,46 @@
-import * as THREE from 'three';
-import { answersObjectsFactory, challengeObjectFactory } from './text';
-import { Game } from './game';
+import * as Rx from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 import { getChallenge } from './vietnamese';
-import { map } from 'rxjs/operators';
-import { setup } from './setup';
 
-export async function startGame() {
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
+function isButton(target: unknown | HTMLButtonElement): target is HTMLButtonElement {
+  return target && !!(target as HTMLButtonElement).value;
+}
 
-  const { camera, scene, keyUp$, resize$ } = setup(renderer);
-  resize$.subscribe();
+const makeButtons = (options: string[]) => options.map(o => {
+  return `<button value="${o}">${o}</button>`;
+}).join();
 
-  const game = new Game(renderer, scene, camera);
-  const getChallengeObject = await challengeObjectFactory();
-  const getAnswersObjects = await answersObjectsFactory();
+export function startGame(): { domElement: HTMLDivElement } {
+  const clickButton$ = Rx.fromEvent(document, 'click').pipe(
+    map(event => (event as MouseEvent)),
+    filter(({ target }) => isButton(target)),
+    map(({ target }) => (target as HTMLButtonElement).value)
+  );
 
-  const { questionText, answerTexts } = getChallenge();
-  let problem = getChallengeObject(questionText);
-  let answers = getAnswersObjects(answerTexts.join(' - '));
+  const domElement = document.createElement('div');
+  const challengeElement = document.createElement('p');
+  const optionsElement = document.createElement('p');
 
-  scene.add(problem);
-  scene.add(answers);
+  let { text, answer, options } = getChallenge();
+  challengeElement.textContent = text;
+  optionsElement.innerHTML = makeButtons(options);
 
-  keyUp$
+  domElement.appendChild(challengeElement);
+  domElement.appendChild(optionsElement);
+
+  const getNext$ = clickButton$
     .pipe(
-      map(key => {
-        // switch the answers left/right or submit
-        if (key === 'Enter') {
-          // new challenge
-          problem = getChallengeObject(questionText);
-          answers = getAnswersObjects(answerTexts.join(' - '));
-          scene.remove(problem);
-          scene.remove(answers);
-
-          scene.add(problem);
-          scene.add(answers);
+      map(value => {
+        if (value === answer) {
+          ({ text, answer, options } = getChallenge()); // FIXME no repeats
+          challengeElement.textContent = text;
+          optionsElement.innerHTML = makeButtons(options);
         }
+
       })
-    )
-    .subscribe();
+    );
 
-  game.update$.subscribe(async () => {
-    // animations
-  });
+  getNext$.subscribe();
 
-  return game;
+  return { domElement };
 }
