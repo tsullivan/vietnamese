@@ -1,4 +1,17 @@
-import { range, sample } from 'lodash';
+const appData = {
+  numbers: [
+    { e: '1', v: 'môt' },
+    { e: '2', v: 'hái' },
+    { e: '3', v: 'ba' },
+    { e: '4', v: 'bồn' },
+    { e: '5', v: 'năm' },
+    { e: '6', v: 'sáu' },
+    { e: '7', v: 'bảy' },
+    { e: '8', v: 'tám' },
+    { e: '9', v: 'chín' },
+    { e: '10', v: 'mứỏi' },
+  ]
+};
 
 interface Challenge {
   questionText: string;
@@ -7,9 +20,11 @@ interface Challenge {
 
 // TODO Levels & Points
 export const getChallenge = (): Challenge => {
-  const a1 = sample(range(4, 15)) as number;
-  const a2 = sample(range(5, 16)) as number;
+  const questionText = appData.numbers[0].v;
+  const answerTexts = [appData.numbers[1].e ];
 
-  let challenge: Challenge;
-  return challenge;
+  return {
+    questionText,
+    answerTexts,
+  };
 };

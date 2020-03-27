@@ -10,18 +10,22 @@ function loadFont(): Promise<THREE.Font> {
   });
 }
 
-export async function problemObjectFactory(): Promise<(msg: string) => THREE.Object3D> {
+const getTextGeometry = (message: string, font: THREE.Font) => {
+  return new THREE.TextGeometry(message, {
+    height: 0,
+    curveSegments: 4,
+    bevelThickness: 4,
+    bevelSize: 1,
+    bevelEnabled: true,
+    size: 80,
+    font,
+  });
+};
+
+export async function challengeObjectFactory(): Promise<(msg: string) => THREE.Object3D> {
   const font = await loadFont();
   return (message: string) => {
-    const textGeo = new THREE.TextGeometry(message, {
-      height: 0,
-      curveSegments: 4,
-      bevelThickness: 4,
-      bevelSize: 1,
-      bevelEnabled: true,
-      size: 80,
-      font,
-    });
+    const textGeo = getTextGeometry(message, font);
 
     textGeo.computeBoundingBox();
     textGeo.computeVertexNormals();
@@ -29,6 +33,40 @@ export async function problemObjectFactory(): Promise<(msg: string) => THREE.Obj
     const textMesh1 = new THREE.Mesh(new THREE.BufferGeometry().fromGeometry(textGeo), [
       new THREE.MeshPhongMaterial({ color: 0xffffff, flatShading: true }), // front
       new THREE.MeshPhongMaterial({ color: 0xffffff }), // side
+    ]);
+    textMesh1.position.z = -100;
+
+    return textMesh1;
+  };
+}
+
+export async function answersObjectsFactory() {
+  const font = await loadFont();
+  return (message: string) => {
+    const textGeo = getTextGeometry(message, font);
+
+    textGeo.computeBoundingBox();
+    textGeo.computeVertexNormals();
+
+    const textMesh1 = new THREE.Mesh(new THREE.BufferGeometry().fromGeometry(textGeo), [
+      new THREE.MeshPhongMaterial({ color: 0xffffff, flatShading: true }), // front
+    ]);
+    textMesh1.position.z = -100;
+
+    return textMesh1;
+  };
+}
+
+export async function guessObjectFactory() {
+  const font = await loadFont();
+  return (message: string) => {
+    const textGeo = getTextGeometry(message, font);
+
+    textGeo.computeBoundingBox();
+    textGeo.computeVertexNormals();
+
+    const textMesh1 = new THREE.Mesh(new THREE.BufferGeometry().fromGeometry(textGeo), [
+      new THREE.MeshPhongMaterial({ color: 0xffffff, flatShading: true }), // front
     ]);
     textMesh1.position.z = -100;
 
