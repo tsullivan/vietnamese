@@ -98,9 +98,9 @@ const appData: AppData = {
     { en: 'to nap', vn: 'ngũ trưa' },
     { en: 'to pick up', vn: 'ấm' },
     { en: 'to play', vn: 'chơi' },
-    { en: 'open the door', vn: 'mớ ca' },
+    { en: 'open the door', vn: 'mớ cửa' },
     { en: 'sleep', vn: 'ngũ' },
-    { en: 'smile', vn: 'cứơi' },
+    { en: 'smile', vn: 'cừơi' },
   ],
   numbersAlt: [
     { en: 'eight', vn: 'tám' },
