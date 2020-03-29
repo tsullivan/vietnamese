@@ -7,6 +7,7 @@ export interface Game {
 }
 
 export interface Score {
+  time: number;
   correct: string[];
   incorrect: string[];
 }

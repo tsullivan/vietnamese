@@ -5,20 +5,32 @@ import { map, take } from 'rxjs/operators';
 export const gameDone$ = new Rx.ReplaySubject<Game>();
 
 const showDonePage = (score: Score) => {
-  const doneElement = document.createElement('p');
-  doneElement.innerHTML = `Thank you for playing.`;
+  const p1 = document.createElement('p');
+  p1.innerHTML = `Thank you for playing!`;
 
-  console.log(JSON.stringify({ score }));
+  const tab = document.createElement('table');
+  tab.innerHTML = (() => {
+    const correct = `<td>correct: </td><td>${score.correct.join(', ')}</td>`;
+    const incorrect = `<td>incorrect: </td><td>${score.incorrect.join(', ')}</td>`;
+    const time = `<td>time: </td><td>${score.time}</td>`;
+
+    return `<thead><td><bold>score</bold></td></thead>
+    <tbody>
+    <tr>${correct}</tr>
+    <tr>${incorrect}</tr>
+    <tr>${time}</tr>
+    </tbody>`;
+  })();
 
   const donePage = document.createElement('div');
-  donePage.appendChild(doneElement);
-
-  return { domElement: doneElement };
+  donePage.appendChild(p1);
+  donePage.appendChild(tab);
+  return { domElement: donePage };
 };
 
 export const showDoneButton = (score: Score) => {
   const doneButton = document.createElement('button');
-  doneButton.appendChild(document.createTextNode('hoàn thành'));
+  doneButton.appendChild(document.createTextNode('xong'));
   Rx.fromEvent(doneButton, 'click')
     .pipe(
       take(1),

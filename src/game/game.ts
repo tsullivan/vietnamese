@@ -1,6 +1,6 @@
 import * as Rx from 'rxjs';
 import { Game, Score } from './';
-import { delay, filter, map } from 'rxjs/operators';
+import { delay, filter, map, tap } from 'rxjs/operators';
 import { getChallenge } from './vietnamese';
 import { showDoneButton } from './done';
 
@@ -15,7 +15,8 @@ const makeButtons = (options: string[]) =>
 export function startGame() {
   console.log(`Starting the game!`);
 
-  const score: Score = { correct: [], incorrect: [] };
+  const startTime = Date.now();
+  const score: Score = { correct: [], incorrect: [], time: 0 };
   let challenge = getChallenge();
   let firstTry = true; // answer is correct when the guess is a first try
 
@@ -43,12 +44,17 @@ export function startGame() {
           };
         } else {
           optionsElement.innerHTML = '🚫';
+          if (firstTry) {
+            score.incorrect.push(challenge.answer); // FIXME always be vn text
+          }
           firstTry = false;
-          score.incorrect.push(challenge.answer); // FIXME always be vn text
           return () => {
             optionsElement.innerHTML = makeButtons(challenge.shuffle());
           };
         }
+      }),
+      tap(() => {
+        score.time = Date.now() - startTime;
       }),
       delay(600),
       map(fn => fn())
