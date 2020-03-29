@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.js": "/vietnamese/static/js/main.26df190c.chunk.js",
+    "main.js.map": "/vietnamese/static/js/main.26df190c.chunk.js.map",
+    "runtime-main.js": "/vietnamese/static/js/runtime-main.342195bb.js",
+    "runtime-main.js.map": "/vietnamese/static/js/runtime-main.342195bb.js.map",
+    "static/js/2.10a0e1ae.chunk.js": "/vietnamese/static/js/2.10a0e1ae.chunk.js",
+    "static/js/2.10a0e1ae.chunk.js.map": "/vietnamese/static/js/2.10a0e1ae.chunk.js.map",
+    "index.html": "/vietnamese/index.html",
+    "precache-manifest.5ad2d72bb525f9165353c9972070975f.js": "/vietnamese/precache-manifest.5ad2d72bb525f9165353c9972070975f.js",
+    "service-worker.js": "/vietnamese/service-worker.js"
+  }
+}
