@@ -25,20 +25,21 @@ export function startGame(): { domElement: HTMLDivElement } {
     map(({ target }) => (target as HTMLButtonElement).value),
     map(guess => {
       if (guess === challenge.answer) {
-        challenge = getChallenge(challenge);
-        challengeElement.textContent = challenge.text;
-        optionsElement.innerHTML = makeButtons(challenge.options);
-        return true;
+        challengeElement.textContent = `${challenge.text}: ${challenge.answer} 👍🏻`;
+        return () => {
+          challenge = getChallenge(challenge);
+          challengeElement.textContent = challenge.text;
+          optionsElement.innerHTML = makeButtons(challenge.options);
+        };
       } else {
         optionsElement.innerHTML = '🚫';
-        return false;
+        return () => {
+          optionsElement.innerHTML = makeButtons(challenge.shuffle());
+        };
       }
     }),
-    filter(isCorrect => !isCorrect),
     delay(600),
-    map(() => {
-      optionsElement.innerHTML = makeButtons(challenge.shuffle());
-    })
+    map((fn) => fn())
   );
 
   guesses$.subscribe();
