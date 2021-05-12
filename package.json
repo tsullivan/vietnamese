@@ -32,7 +32,7 @@
     "@types/jest": "^24.0.18",
     "@types/lodash": "^4.14.149",
     "@types/node": "^12.7.8",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "react-scripts": "3.1.2",
     "rxjs": "^6.5.3",
     "three": "^0.125.0",
