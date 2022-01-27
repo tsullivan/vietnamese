@@ -35,7 +35,7 @@
     "lodash": "^4.17.21",
     "react-scripts": "3.1.2",
     "rxjs": "^6.5.3",
-    "three": "^0.125.0",
+    "three": "^0.137.0",
     "typescript": "^3.6.3"
   },
   "devDependencies": {
